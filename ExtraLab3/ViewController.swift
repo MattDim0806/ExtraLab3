@@ -37,17 +37,41 @@ var myVideoData : videoApi?
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
     
+    @IBOutlet weak var videoView: UIView!
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var playBtn: UIButton!
+    
+    var shouldUpdateScrollPosition = true
+    var updateTimer: Timer?
+    var previousIndex : IndexPath?
+    var selectedIndexPath: IndexPath?
+    var flag : Bool?
     var avPlayer:AVPlayer?
-    var playerItem:AVPlayerItem?
+    var avpViewController = AVPlayerViewController()
+    let sections = 0
+    var rows = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableViewInit()
         getApi()
-        
+        tableView.reloadData()
     }
+    
+    @IBAction func playBtnClick(_ sender: Any) {
+        guard flag != nil else{
+            print("太急了，還沒獲取到api資料")
+            return
+        }
+        if(avPlayer?.rate == 0){
+            avPlayer?.play()
+            playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        }else{
+            avPlayer?.pause()
+            playBtn.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        }
+    }
+    
     
     func getApi(){
         let apiUrl = "https://api.italkutalk.com/api/video/detail"
@@ -68,8 +92,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 DispatchQueue.main.async {
                     do{
                         myVideoData = try JSONDecoder().decode(videoApi.self, from: data!)
-                        print(myVideoData?.result.videoInfo.captionResult.results[0].captions[3].content ?? "")
+                        print("獲取api資料成功")
                         self.tableView.reloadData()
+                        self.flag = true
+                        self.startVideo()
+                        self.avPlayer?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: DispatchQueue.main) { [weak self] time in
+                            self?.updateTableViewScrollPosition(for: time)
+                        }
                     }catch{
                         print("錯誤！:\(error)")
                     }
@@ -79,6 +108,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         task.resume()
     }
 
+    func startVideo(){
+        let url = URL(string: "https://itutbox.s3.amazonaws.com/youtubeMP4/Online/5ee07d2e4486bc1b20c535bf%5BFriday%20Joke%5D%20A%20Woman%20Gets%20On%20A%20Bus%20-%20YouTube.mp4.mp4")
+        avPlayer = AVPlayer(url: url!)
+        avpViewController.player = avPlayer
+        avpViewController.view.frame.size.width = videoView.frame.size.width
+        avpViewController.view.frame.size.height = videoView.frame.size.height
+        self.videoView.addSubview(avpViewController.view)
+    }
+    
+    func updateTableViewScrollPosition(for time: CMTime) {
+        guard shouldUpdateScrollPosition else {
+               return
+           }
+        let seconds = time.seconds
+        var indexPath = IndexPath(row: rows, section: sections)// 根據秒數計算需要滾動到的 cell 的 indexPath
+        for i in 0..<myVideoData!.result.videoInfo.captionResult.results[0].captions.count {
+            if myVideoData!.result.videoInfo.captionResult.results[0].captions[i].miniSecond > seconds {
+                rows = i - 1
+                break
+            }
+            //當影片到達最後時，將最後的cell移到最上面
+            if i == myVideoData!.result.videoInfo.captionResult.results[0].captions.count - 1{
+                rows = i
+            }
+        
+        }
+        indexPath = IndexPath(row: rows, section: sections)
+        guard selectedIndexPath != indexPath else{
+            return
+        }
+        tableView.reloadData()
+        tableView.cellForRow(at: previousIndex ?? IndexPath(row: 0, section: 0))?.backgroundColor = UIColor.white
+        tableView.cellForRow(at: indexPath)?.backgroundColor = UIColor.gray
+        tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        previousIndex = indexPath
+    }
+    
     func tableViewInit(){
         let cellNIB = UINib(nibName: "subTableViewCell", bundle: nil)
         tableView.register(cellNIB, forCellReuseIdentifier: "cell")
@@ -92,7 +158,35 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! subTableViewCell
         cell.setCell(sub: myVideoData?.result.videoInfo.captionResult.results[0].captions[indexPath.row].content ?? "無字幕", index: indexPath.row)
+        if indexPath == previousIndex {
+                cell.backgroundColor = UIColor.gray
+            } else {
+                cell.backgroundColor = UIColor.white
+            }
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
+        
+        updateTimer?.invalidate()
+            updateTimer = nil
+            // 停止滾動位置的更新
+            shouldUpdateScrollPosition = false
+            // 啟動計時器，在兩秒後恢復滾動位置的更新
+            updateTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { [weak self] _ in
+                self?.shouldUpdateScrollPosition = true
+            }
+        
+        var time = myVideoData?.result.videoInfo.captionResult.results[0].captions[indexPath.row].miniSecond ?? 0
+        //time += 1
+        let targetTime = CMTime(seconds: time, preferredTimescale: 1000)
+        avPlayer?.seek(to: targetTime)
+        avPlayer?.play()
+        playBtn.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        tableView.reloadData()
+        tableView.cellForRow(at: previousIndex ?? IndexPath(row: 0, section: 0))?.backgroundColor = UIColor.white
+        tableView.cellForRow(at: indexPath)?.backgroundColor = UIColor.gray
+        tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        previousIndex = indexPath
+    }
 }
-

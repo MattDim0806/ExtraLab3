@@ -13,6 +13,7 @@ class subTableViewCell: UITableViewCell {
     @IBOutlet weak var subLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
+        //backgroundColor = UIColor.white
         // Initialization code
     }
 
@@ -24,6 +25,6 @@ class subTableViewCell: UITableViewCell {
     
     func setCell(sub: String, index: Int){
         subLabel.text = sub
-        indexLabel.text = String(index)
+        indexLabel.text = String(index + 1)
     }
 }

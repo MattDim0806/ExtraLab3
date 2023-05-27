@@ -13,6 +13,8 @@
 		C911B6D22A21FCC300A9F4C1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C911B6D02A21FCC300A9F4C1 /* Main.storyboard */; };
 		C911B6D42A21FCC400A9F4C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C911B6D32A21FCC400A9F4C1 /* Assets.xcassets */; };
 		C911B6D72A21FCC400A9F4C1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C911B6D52A21FCC400A9F4C1 /* LaunchScreen.storyboard */; };
+		C911B6E02A2216B100A9F4C1 /* subTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C911B6DE2A2216B100A9F4C1 /* subTableViewCell.swift */; };
+		C911B6E12A2216B100A9F4C1 /* subTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C911B6DF2A2216B100A9F4C1 /* subTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		C911B6D32A21FCC400A9F4C1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C911B6D62A21FCC400A9F4C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C911B6D82A21FCC400A9F4C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C911B6DE2A2216B100A9F4C1 /* subTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = subTableViewCell.swift; sourceTree = "<group>"; };
+		C911B6DF2A2216B100A9F4C1 /* subTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = subTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,8 @@
 				C911B6D32A21FCC400A9F4C1 /* Assets.xcassets */,
 				C911B6D52A21FCC400A9F4C1 /* LaunchScreen.storyboard */,
 				C911B6D82A21FCC400A9F4C1 /* Info.plist */,
+				C911B6DE2A2216B100A9F4C1 /* subTableViewCell.swift */,
+				C911B6DF2A2216B100A9F4C1 /* subTableViewCell.xib */,
 			);
 			path = ExtraLab3;
 			sourceTree = "<group>";
@@ -127,6 +133,7 @@
 			files = (
 				C911B6D72A21FCC400A9F4C1 /* LaunchScreen.storyboard in Resources */,
 				C911B6D42A21FCC400A9F4C1 /* Assets.xcassets in Resources */,
+				C911B6E12A2216B100A9F4C1 /* subTableViewCell.xib in Resources */,
 				C911B6D22A21FCC300A9F4C1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -140,6 +147,7 @@
 			files = (
 				C911B6CF2A21FCC300A9F4C1 /* ViewController.swift in Sources */,
 				C911B6CB2A21FCC300A9F4C1 /* AppDelegate.swift in Sources */,
+				C911B6E02A2216B100A9F4C1 /* subTableViewCell.swift in Sources */,
 				C911B6CD2A21FCC300A9F4C1 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

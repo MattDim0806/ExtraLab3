@@ -122,6 +122,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                return
            }
         let seconds = time.seconds
+        print(seconds)
         var indexPath = IndexPath(row: rows, section: sections)// 根據秒數計算需要滾動到的 cell 的 indexPath
         for i in 0..<myVideoData!.result.videoInfo.captionResult.results[0].captions.count {
             if myVideoData!.result.videoInfo.captionResult.results[0].captions[i].miniSecond > seconds {
@@ -131,6 +132,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             //當影片到達最後時，將最後的cell移到最上面
             if i == myVideoData!.result.videoInfo.captionResult.results[0].captions.count - 1{
                 rows = i
+            }
+            //當影片播放到結束時，跳回第一個cell並且影片重新播放
+            if seconds >= Double(myVideoData!.result.videoInfo.duration - 1){
+                rows = 0
+                avPlayer?.seek(to: CMTime(seconds: 0, preferredTimescale: 1))
+                avPlayer?.play()
             }
         
         }
@@ -177,7 +184,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self?.shouldUpdateScrollPosition = true
             }
         
-        var time = myVideoData?.result.videoInfo.captionResult.results[0].captions[indexPath.row].miniSecond ?? 0
+        let time = myVideoData?.result.videoInfo.captionResult.results[0].captions[indexPath.row].miniSecond ?? 0
         //time += 1
         let targetTime = CMTime(seconds: time, preferredTimescale: 1000)
         avPlayer?.seek(to: targetTime)
